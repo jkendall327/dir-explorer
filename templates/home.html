@@ -1,6 +1,19 @@
 {% extends "base.html" %}
 {% block content %}
 <h1>{{ title }}</h1>
+<input type="text" id="dir" placeholder="Enter directory">
+<button onclick="goToPage()">Go</button>
+
+
+<script>
+    function goToPage() {
+        const name = document.getElementById('dir').value;
+        if (name) {
+            window.location.href = `/directory?path=${encodeURIComponent(name)}`;
+        }
+    }
+</script>
+
 <ul>
     {% for it in items %}
     <li>{{ it }}</li>
