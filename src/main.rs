@@ -15,6 +15,7 @@ use tower_http::{
 use tracing::Level;
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 
+mod config;
 mod dir;
 
 #[derive(Template)]
@@ -24,28 +25,9 @@ struct HomeTemplate<'a> {
     items: Vec<&'a str>,
 }
 
-#[derive(Serialize, Deserialize)]
-struct Settings {
-    port: u16,
-    address: String,
-}
-
-impl Default for Settings {
-    fn default() -> Self {
-        Self {
-            port: 3000,
-            address: "0.0.0.0".to_owned(),
-        }
-    }
-}
-
-fn load() -> Result<Settings, ConfyError> {
-    confy::load::<Settings>("myapp", None)
-}
-
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
-    let config = load()?;
+    let config = config::load()?;
 
     tracing_subscriber::registry()
         .with(
