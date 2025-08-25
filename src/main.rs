@@ -1,4 +1,4 @@
-use std::error::Error;
+use std::{error::Error, path::Path};
 
 use askama::Template;
 use axum::{
@@ -14,6 +14,8 @@ use tower_http::{
 };
 use tracing::Level;
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
+
+mod dir;
 
 #[derive(Template)]
 #[template(path = "home.html")]
@@ -65,6 +67,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
     let app = Router::new()
         .route("/", get(home))
         .route("/health", get(health))
+        .route("/directory", get(list_things))
         .layer(trace)
         .nest_service("/static", ServeDir::new("static"));
 
@@ -85,4 +88,15 @@ async fn home() -> impl IntoResponse {
 
 async fn health() -> &'static str {
     "healthy"
+}
+
+#[derive(Deserialize)]
+struct DirectoryQuery {
+    path: String,
+}
+
+// This will parse query strings like `?page=2&per_page=30` into `Pagination`
+// structs.
+async fn list_things(pagination: axum::extract::Query<DirectoryQuery>) {
+    let z = dir::Directory::new(Path::new(&pagination.path));
 }
