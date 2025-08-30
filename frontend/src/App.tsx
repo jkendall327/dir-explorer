@@ -1,35 +1,36 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { http } from './lib/http'
 
-function App() {
-  const [count, setCount] = useState(0)
+type Item = { id: number; name: string }
+
+export default function App() {
+  const qc = useQueryClient()
+  const items = useQuery({
+    queryKey: ['items'],
+    queryFn: () => http<Item[]>('/items'),
+  })
+
+  const addItem = useMutation({
+    mutationFn: (name: string) =>
+      http<Item>('/items', { method: 'POST', body: JSON.stringify({ name }) }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['items'] }),
+  })
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <div style={{ padding: 24, fontFamily: 'system-ui' }}>
+      <h1>React ↔ Rust (REST)</h1>
+      <button
+        onClick={() => addItem.mutate(`Item ${Date.now()}`)}
+        disabled={addItem.isPending}
+      >
+        Add Item
+      </button>
+
+      {items.isLoading && <p>Loading…</p>}
+      {items.error && <p>Error: {(items.error as Error).message}</p>}
+      <ul>
+        {items.data?.map(i => <li key={i.id}>{i.name}</li>)}
+      </ul>
+    </div>
   )
 }
-
-export default App
