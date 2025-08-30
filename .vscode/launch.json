@@ -1,0 +1,33 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Rust backend (cargo)",
+      "type": "lldb",
+      "request": "launch",
+      "cargo": {
+        "args": [
+          "run",
+          "--manifest-path",
+          "${workspaceFolder}/backend/Cargo.toml"
+        ]
+      },
+      "cwd": "${workspaceFolder}",
+      "sourceLanguages": ["rust"]
+    },
+    {
+      "name": "Open Vite in Chrome",
+      "type": "firefox",
+      "request": "launch",
+      "url": "http://localhost:5173",
+      "webRoot": "${workspaceFolder}/frontend",
+      "preLaunchTask": "npm: dev - frontend"
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Debug: Backend + Frontend",
+      "configurations": ["Rust backend (cargo)", "Open Vite in Chrome"]
+    }
+  ]
+}
