@@ -7,7 +7,7 @@ export default defineConfig({
     proxy: {
       // proxy /api/* to your Rust API
       '/api': {
-        target: 'http://127.0.0.1:3000', // your Rust server port
+        target: 'http://backend:3000', // backend service within Docker
         changeOrigin: true,
         rewrite: path => path.replace(/^\/api/, ''), // if your Rust routes don't have /api
       },
