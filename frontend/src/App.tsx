@@ -1,19 +1,12 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 import { http, API_BASE } from './lib/http'
 
 type Item = { id: number; name: string }
 
 export default function App() {
-  const qc = useQueryClient()
   const items = useQuery({
     queryKey: ['items'],
     queryFn: () => http<Item[]>('/items'),
-  })
-
-  const addItem = useMutation({
-    mutationFn: (name: string) =>
-      http<Item>('/items', { method: 'POST', body: JSON.stringify({ name }) }),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ['items'] }),
   })
 
   const health = useQuery({
@@ -37,12 +30,6 @@ export default function App() {
           {health.isError ? 'Backend unhealthy' : 'Backend healthy'}
         </p>
       )}
-      <button
-        onClick={() => addItem.mutate(`Item ${Date.now()}`)}
-        disabled={addItem.isPending}
-      >
-        Add Item
-      </button>
 
       {items.isLoading && <p>Loading…</p>}
       {items.error && <p>Error: {(items.error as Error).message}</p>}
