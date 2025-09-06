@@ -1,6 +1,7 @@
-FROM rust:1.79-bullseye as builder
+FROM rust:1.89-bullseye AS builder
 WORKDIR /app
-COPY Cargo.toml Cargo.lock .
+COPY Cargo.toml .
+COPY Cargo.lock .
 COPY src src
 COPY templates templates
 COPY static static
