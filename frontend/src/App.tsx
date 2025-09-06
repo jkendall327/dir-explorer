@@ -1,14 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
-import { http, API_BASE } from './lib/http'
-
-type Item = { id: number; name: string }
+import { API_BASE } from './lib/http'
 
 export default function App() {
-  const items = useQuery({
-    queryKey: ['items'],
-    queryFn: () => http<Item[]>('/items'),
-  })
-
   const health = useQuery({
     queryKey: ['health'],
     queryFn: () =>
@@ -30,12 +23,6 @@ export default function App() {
           {health.isError ? 'Backend unhealthy' : 'Backend healthy'}
         </p>
       )}
-
-      {items.isLoading && <p>Loading…</p>}
-      {items.error && <p>Error: {(items.error as Error).message}</p>}
-      <ul>
-        {items.data?.map(i => <li key={i.id}>{i.name}</li>)}
-      </ul>
     </div>
   )
 }

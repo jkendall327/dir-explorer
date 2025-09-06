@@ -5,11 +5,9 @@ export default defineConfig({
   plugins: [react()],
   server: {
     proxy: {
-      // proxy /api/* to your Rust API
       '/api': {
         target: 'http://backend:3000', // backend service within Docker
         changeOrigin: true,
-        rewrite: path => path.replace(/^\/api/, ''), // if your Rust routes don't have /api
       },
     },
   },

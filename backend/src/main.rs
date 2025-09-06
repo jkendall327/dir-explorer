@@ -51,8 +51,8 @@ async fn main() -> Result<(), Box<dyn Error>> {
 
     let app = Router::new()
         .route("/", get(home))
-        .route("/health", get(health))
-        .route("/directory", get(list_things))
+        .route("/api/health", get(health))
+        .route("/api/directory", get(list_things))
         .layer(cors)
         .layer(trace)
         .nest_service("/static", ServeDir::new("static"));
