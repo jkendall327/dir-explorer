@@ -9,6 +9,7 @@ use axum::{
 use confy::ConfyError;
 use serde::{Deserialize, Serialize};
 use tower_http::{
+    cors::CorsLayer,
     services::ServeDir,
     trace::{DefaultMakeSpan, DefaultOnRequest, DefaultOnResponse, TraceLayer},
 };
@@ -46,10 +47,13 @@ async fn main() -> Result<(), Box<dyn Error>> {
         .on_request(DefaultOnRequest::new().level(Level::INFO))
         .on_response(DefaultOnResponse::new().level(Level::INFO));
 
+    let cors = CorsLayer::permissive();
+
     let app = Router::new()
         .route("/", get(home))
         .route("/health", get(health))
         .route("/directory", get(list_things))
+        .layer(cors)
         .layer(trace)
         .nest_service("/static", ServeDir::new("static"));
 
